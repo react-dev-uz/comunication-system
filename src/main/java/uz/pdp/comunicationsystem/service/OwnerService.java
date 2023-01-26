@@ -75,6 +75,7 @@ public class OwnerService {
                 }).orElseGet(() -> notFound().build());
     }
 
+//    TODO: owner editing
     public ResponseEntity<?> editOwner(UUID ownerId, OwnerDTO ownerDTO) {
         return null;
     }

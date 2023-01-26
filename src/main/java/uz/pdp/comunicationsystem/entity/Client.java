@@ -34,6 +34,9 @@ public class Client {
     @Enumerated(EnumType.STRING)
     private ClientType clientType;
 
+    @Transient
+    private String fullName;
+
     @ManyToMany
     @ToString.Exclude
     private Set<Role> roles;
@@ -41,6 +44,10 @@ public class Client {
     @OneToMany(mappedBy = "client")
     @ToString.Exclude
     private List<SimCard> simCards;
+
+    public String getFullName() {
+        return String.format("%s %s", this.firstName, this.lastName);
+    }
 
     @Override
     public boolean equals(Object o) {
