@@ -26,12 +26,17 @@ public class Detalizatsiya {
     private Double amount;
 
     @ManyToOne
-    private SimCard simCards;
+    private SimCard simCard;
 
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     private Timestamp createdAt;
 
+    public Detalizatsiya(Action action, Double amount, SimCard simCard) {
+        this.action = action;
+        this.amount = amount;
+        this.simCard = simCard;
+    }
 
     @Override
     public boolean equals(Object o) {
