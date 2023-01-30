@@ -41,7 +41,7 @@ public class Client {
     @ToString.Exclude
     private Set<Role> roles;
 
-    @OneToMany(mappedBy = "client")
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<SimCard> simCards;
 

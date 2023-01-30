@@ -34,7 +34,7 @@ public class SimCard implements UserDetails {
     private String number;
 
     @Column(name = "card_pin_code")
-    private String cardPinCode;
+    private String cardPinCode = (Math.random() * 10000) + "";
 
     @Column(name = "pin_code_number")
     private String pinCode;
@@ -44,6 +44,8 @@ public class SimCard implements UserDetails {
     private double amountMb = 0;
     private double amountSMS = 0;
     private double amountMinute = 0;
+
+    private boolean isDebit = false;
 
     @Transient
     private String fullNumber;
@@ -65,6 +67,19 @@ public class SimCard implements UserDetails {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Timestamp updatedAt;
+
+    public SimCard(String name, String code, String number, boolean active, double balance, double amountMb, double amountSMS, double amountMinute, Tariff tariff, Client client) {
+        this.name = name;
+        this.code = code;
+        this.number = number;
+        this.active = active;
+        this.balance = balance;
+        this.amountMb = amountMb;
+        this.amountSMS = amountSMS;
+        this.amountMinute = amountMinute;
+        this.tariff = tariff;
+        this.client = client;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

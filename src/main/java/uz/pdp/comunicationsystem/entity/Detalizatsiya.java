@@ -25,6 +25,8 @@ public class Detalizatsiya {
 
     private Double amount;
 
+    private Double price = 0D;
+
     @ManyToOne
     private SimCard simCard;
 
@@ -36,6 +38,13 @@ public class Detalizatsiya {
         this.action = action;
         this.amount = amount;
         this.simCard = simCard;
+    }
+
+    public Detalizatsiya(Action action, Double amount, SimCard simCard, Double price) {
+        this.action = action;
+        this.amount = amount;
+        this.simCard = simCard;
+        this.price = price;
     }
 
     @Override
