@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uz.pdp.comunicationsystem.entity.Detalizatsiya;
 import uz.pdp.comunicationsystem.entity.enums.Action;
 import uz.pdp.comunicationsystem.payload.response.DetailsDTO;
@@ -42,6 +43,7 @@ public class DetalizatsiyaService {
         return ok(Action.values());
     }
 
+    @Transactional
     public ResponseEntity<?> addNewAction(DetailsDTO dto) {
         return simCardRepository.findById(dto.getSimCardId())
                 .map(simCard -> {
@@ -57,6 +59,7 @@ public class DetalizatsiyaService {
                 .orElseGet(() -> status(NOT_FOUND).body("Sim card not found"));
     }
 
+//   // todo
     public ResponseEntity<?> exportDetailsToDocumentFormat(UUID simCardId, String type) {
         return null;
     }

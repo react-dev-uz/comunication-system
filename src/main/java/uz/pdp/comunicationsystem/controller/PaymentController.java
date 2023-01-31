@@ -2,6 +2,8 @@ package uz.pdp.comunicationsystem.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.comunicationsystem.payload.request.PayDTO;
 import uz.pdp.comunicationsystem.service.PaymentService;
@@ -16,6 +18,7 @@ public class PaymentController {
         this.service = service;
     }
 
+    @Secured({"ROLE_DIRECTOR", "ROLE_MANAGER"})
     @GetMapping
     public ResponseEntity<?> getAllHistory(
             @RequestParam(name = "sort", defaultValue = "id") String sort,
@@ -26,16 +29,19 @@ public class PaymentController {
         return service.getAll(page, size, sort, filter);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/types")
     public ResponseEntity<?> getPayTypes() {
         return service.getPayTypes();
     }
 
+    @Secured({"ROLE_CLIENT"})
     @GetMapping("/sim/{code}-{number}")// http://localhost:8080/api/pay/sim/90-1234567
     public ResponseEntity<?> getOneOneSimCardHistory(@PathVariable(name = "code") String code, @PathVariable(name = "number") String number) {
         return service.getSimCardHistory(code, number);
     }
 
+    @Secured({"ROLE_CLIENT"})
     @PostMapping
     public ResponseEntity<?> savePay(@RequestBody PayDTO payDTO) {
         return service.addNewPay(payDTO);

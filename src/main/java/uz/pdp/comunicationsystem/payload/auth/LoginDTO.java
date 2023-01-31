@@ -1,16 +1,14 @@
 package uz.pdp.comunicationsystem.payload.auth;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 public class LoginDTO {
-    @NotNull
-    @Email(message = "Email not valid")
+
+    @NotBlank
     private String username;
-    @NotNull
-    @Size(min = 7)
+
+    @NotBlank
     private String password;
 }

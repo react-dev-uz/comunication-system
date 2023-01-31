@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.ResponseEntity.*;
 
 @Service
@@ -50,7 +51,8 @@ public class OwnerService {
     }
 
     public ResponseEntity<?> addOwner(OwnerDTO dto) {
-        if (repository.existsByUsername(dto.getUsername())) return status(422).body("Ushbu foydalanuvchi nomi oldin ro'yhatga olingan");
+        if (repository.existsByUsername(dto.getUsername()))
+            return status(422).body("Ushbu foydalanuvchi nomi oldin ro'yhatga olingan");
         Owner principal = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<Filial> optionalFilial = filialRepository.findById(dto.getFilialId());
         if (optionalFilial.isEmpty()) return status(404).body("filial not found");
@@ -75,8 +77,20 @@ public class OwnerService {
                 }).orElseGet(() -> notFound().build());
     }
 
-//    TODO: owner editing
-    public ResponseEntity<?> editOwner(UUID ownerId, OwnerDTO ownerDTO) {
-        return null;
+    public ResponseEntity<?> editOwner(UUID ownerId, OwnerDTO dto) {
+        Optional<Owner> optionalOwner = repository.findById(ownerId);
+        if (optionalOwner.isEmpty()) return status(NOT_FOUND).body("Owner not found");
+        if (repository.existsByUsernameAndIdNot(dto.getUsername(), ownerId))
+            return status(422).body("This username is already registered.");
+        Optional<Filial> optionalFilial = filialRepository.findById(dto.getFilialId());
+        if (optionalFilial.isEmpty()) return status(NOT_FOUND).body("Filial not found");
+        Owner owner = optionalOwner.get();
+        owner.setFirstName(dto.getFirstname());
+        owner.setLastName(dto.getLastname());
+        owner.setFilial(optionalFilial.get());
+        owner.setPassword(passwordEncoder.encode(dto.getPassword()));
+        owner.setUsername(dto.getUsername());
+        repository.save(owner);
+        return ok("Owner updated");
     }
 }

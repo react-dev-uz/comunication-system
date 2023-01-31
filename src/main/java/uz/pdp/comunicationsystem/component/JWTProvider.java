@@ -4,11 +4,12 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import uz.pdp.comunicationsystem.entity.Role;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.Set;
 
 import static io.jsonwebtoken.Header.JWT_TYPE;
 import static io.jsonwebtoken.Header.TYPE;
@@ -19,16 +20,16 @@ public class JWTProvider {
     @Value("${spring.jwt.expiration}")
     private Long expiration;
 
-    public String generateToken(Authentication authentication) {
-        Object principal = authentication.getPrincipal();
+    public String generateToken(String username, Set<Role> roles) {
         return Jwts
                 .builder()
                 .setHeaderParam(TYPE, JWT_TYPE)
+                .setSubject(username)
+                .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + expiration * 1000))
                 .signWith(key)
                 .compact();
-
     }
 
     public boolean validateToken(String token) {
