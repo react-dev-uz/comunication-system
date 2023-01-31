@@ -12,6 +12,7 @@ import uz.pdp.comunicationsystem.entity.Packet;
 import uz.pdp.comunicationsystem.entity.SimCard;
 import uz.pdp.comunicationsystem.entity.Tariff;
 import uz.pdp.comunicationsystem.entity.enums.Action;
+import uz.pdp.comunicationsystem.payload.request.SimCardDTO;
 import uz.pdp.comunicationsystem.repository.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.String.format;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.ResponseEntity.*;
 
@@ -62,6 +64,14 @@ public class SimCardService {
             case "*111*1*1#", "*111*1*3#", "*111*1*4#", "*111*1*2#" -> smsPacketActivate(ussdCode, simCard);
             default -> badRequest().body("Invalid USSD code");
         };
+    }
+
+    public ResponseEntity<?> addSimCard(SimCardDTO dto) {
+        if (repository.existsByCodeAndNumber(dto.getCode(), dto.getNumber()))
+            return badRequest().body("Sim card already exists");
+        SimCard simCard = new SimCard(dto.getName(), dto.getCode(), dto.getNumber(), true, 0, 0, 0, 0, null, null);
+        repository.save(simCard);
+        return status(CREATED).body("Sim card created successfully");
     }
 
     public ResponseEntity<?> internetPacketActivate(String ussdCode, SimCard simCard) {
@@ -113,7 +123,7 @@ public class SimCardService {
     }
 
     public ResponseEntity<?> changeTariff(Long tariffId) {
-        tariffRepository.findById(tariffId)
+        return tariffRepository.findById(tariffId)
                 .map(tariff -> {
                     SimCard simCard = (SimCard) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
                     if (Objects.equals(tariff.getId(), simCard.getTariff().getId()))
@@ -129,9 +139,8 @@ public class SimCardService {
                     simCard.setBalance(simCard.getBalance() - (tariff.getPrice() + tariff.getTransferPrice()));
                     SimCard saved = repository.save(simCard);
                     detalizatsiyaRepository.save(new Detalizatsiya(Action.ACTION_TARIFF, 0D, saved, (tariff.getTransferPrice() + tariff.getPrice())));
-                    return ok("Tariff changed");
+                    return ok("Tariff successfully changed");
                 })
                 .orElseGet(() -> status(NOT_FOUND).body("Tariff not found"));
-        return null;
     }
 }
