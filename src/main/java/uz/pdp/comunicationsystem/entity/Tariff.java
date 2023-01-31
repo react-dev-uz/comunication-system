@@ -41,7 +41,7 @@ public class Tariff {
     private ClientType clientType;
 
     public Tariff(Long tariffId, TariffDTO dto) {
-        if (tariffId!=null) this.id = tariffId;
+        if (tariffId != null) this.id = tariffId;
         this.name = dto.getName();
         this.price = dto.getPrice();
         this.transferPrice = dto.getTransferPrice();

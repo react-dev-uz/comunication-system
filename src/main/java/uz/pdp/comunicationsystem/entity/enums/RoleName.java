@@ -4,5 +4,5 @@ public enum RoleName {
     ROLE_DIRECTOR,
     ROLE_MANAGER,
     ROLE_STAFF,
-    ROLE_USER
+    ROLE_CLIENT
 }

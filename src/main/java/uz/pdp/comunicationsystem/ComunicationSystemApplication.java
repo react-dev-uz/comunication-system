@@ -54,7 +54,7 @@ public class ComunicationSystemApplication implements CommandLineRunner {
     }
 
     public synchronized void roleSaveDB() {
-        roleRepository.saveAll(Set.of(Role.build(null, ROLE_DIRECTOR), Role.build(null, ROLE_MANAGER), Role.build(null, ROLE_STAFF), Role.build(null, ROLE_USER)));
+        roleRepository.saveAll(Set.of(Role.build(null, ROLE_DIRECTOR), Role.build(null, ROLE_MANAGER), Role.build(null, ROLE_STAFF), Role.build(null, ROLE_CLIENT)));
     }
 
     public synchronized void ownerSaveDB() {

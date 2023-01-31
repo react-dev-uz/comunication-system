@@ -2,6 +2,7 @@ package uz.pdp.comunicationsystem.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.comunicationsystem.service.SimCardService;
 
@@ -17,16 +18,19 @@ public class SimCardController {
         this.service = service;
     }
 
-    @GetMapping("/ussd-code")
-    public ResponseEntity<?> getSimData(@RequestParam(name = "ussd") String ussdCode) {
+    @Secured({"ROLE_CLIENT"})
+    @GetMapping("/ussd")
+    public ResponseEntity<?> getSimData(@RequestParam(name = "code") String ussdCode) {
         return service.simUssdCodeService(ussdCode);
     }
 
-    @GetMapping("/status")
-    public ResponseEntity<?> getActiveSimCards(@RequestParam(name = "q", defaultValue = "active") String active) {
-        return null;
-    }
+//    @Secured({"ROLE_CLIENT"})
+//    @GetMapping("/status")
+//    public ResponseEntity<?> getActiveSimCards(@RequestParam(name = "q", defaultValue = "active") String active) {
+//        return null;
+//    }
 
+    @Secured({"ROLE_MANAGER", "ROLE_STAFF"})
     @GetMapping
     public ResponseEntity<?> getAll(@RequestParam(name = "page", defaultValue = "1") Integer page, @RequestParam(name = "size", defaultValue = "20") Integer size) {
         return service.getAll(page, size);
@@ -37,8 +41,9 @@ public class SimCardController {
         return service.getOne(id);
     }
 
+    @Secured("ROLE_CLIENT")
     @GetMapping("/change-tariff/{tariffId}")
-    public ResponseEntity<?> changeTariff(@PathVariable(name = "tariffId") UUID tariffId) {
-        return null;
+    public ResponseEntity<?> changeTariff(@PathVariable(name = "tariffId") Long tariffId) {
+        return service.changeTariff(tariffId);
     }
 }

@@ -88,7 +88,7 @@ public class ClientService {
         } else {
             return status(NOT_FOUND).body("Client type not found");
         }
-        return roleRepository.findByName(RoleName.ROLE_USER)
+        return roleRepository.findByName(RoleName.ROLE_CLIENT)
                 .map(role -> {
                     client.setRoles(Set.of(role));
                     client.setFirstName(dto.getFirstname());
