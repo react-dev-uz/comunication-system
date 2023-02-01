@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uz.pdp.comunicationsystem.component.JWTProvider;
 import uz.pdp.comunicationsystem.entity.Owner;
 import uz.pdp.comunicationsystem.entity.SimCard;
@@ -46,16 +47,18 @@ public class AuthService implements UserDetailsService {
 
     public ResponseEntity<?> loginForOwner(LoginDTO loginDTO) {
         try {
-//            Owner owner = (Owner) authenticationManager
-//                    .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
+            Owner owner = (Owner) authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
+            String token = jwtProvider.generateToken(owner.getUsername(), owner.getRoles());
 
-//            String token = jwtProvider.generateToken(owner.getUsername(), owner.getRoles());
-            Optional<Owner> optionalOwner = ownerRepository.findByUsername(loginDTO.getUsername());
-            if (optionalOwner.isEmpty()) return status(HttpServletResponse.SC_UNAUTHORIZED).body("username not found");
-            Owner owner = optionalOwner.get();
-            if (!owner.getPassword().equals(passwordEncoder.encode(loginDTO.getPassword())))
-                return status(HttpServletResponse.SC_UNAUTHORIZED).body("Password incorrect");
-            return ok("OK");
+//            Optional<Owner> optionalOwner = ownerRepository.findByUsername(loginDTO.getUsername());
+//            if (optionalOwner.isEmpty()) return status(HttpServletResponse.SC_UNAUTHORIZED).body("username not found");
+//            Owner owner = optionalOwner.get();
+//
+//            if (!owner.getPassword().equals(passwordEncoder.encode(loginDTO.getPassword())))
+//                return status(HttpServletResponse.SC_UNAUTHORIZED).body("Password incorrect");
+//
+            return ok(token);
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
             return status(HttpServletResponse.SC_UNAUTHORIZED).body("Username or password is invalid");
@@ -73,6 +76,7 @@ public class AuthService implements UserDetailsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Owner> optionalOwner = ownerRepository.findByUsername(username);
         if (optionalOwner.isPresent()) return optionalOwner.get();
