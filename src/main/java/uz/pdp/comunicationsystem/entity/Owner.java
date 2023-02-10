@@ -5,9 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
@@ -29,6 +31,9 @@ public class Owner implements UserDetails {
     private String firstName;
     @Column(name = "last_name", nullable = false)
     private String lastName;
+    @Column(name = "created_at", updatable = false)
+    @CreationTimestamp
+    private Timestamp createdAt;
     @Column(nullable = false)
     @JsonIgnore
     private String password;

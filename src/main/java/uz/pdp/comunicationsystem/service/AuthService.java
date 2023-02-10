@@ -46,23 +46,15 @@ public class AuthService implements UserDetailsService {
     }
 
     public ResponseEntity<?> loginForOwner(LoginDTO loginDTO) {
-        try {
-            Owner owner = (Owner) authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
-            String token = jwtProvider.generateToken(owner.getUsername(), owner.getRoles());
 
-//            Optional<Owner> optionalOwner = ownerRepository.findByUsername(loginDTO.getUsername());
-//            if (optionalOwner.isEmpty()) return status(HttpServletResponse.SC_UNAUTHORIZED).body("username not found");
-//            Owner owner = optionalOwner.get();
-//
-//            if (!owner.getPassword().equals(passwordEncoder.encode(loginDTO.getPassword())))
-//                return status(HttpServletResponse.SC_UNAUTHORIZED).body("Password incorrect");
-//
-            return ok(token);
-        } catch (Exception e) {
-            System.out.println(e.getLocalizedMessage());
-            return status(HttpServletResponse.SC_UNAUTHORIZED).body("Username or password is invalid");
-        }
+        Optional<Owner> optionalOwner = ownerRepository.findByUsername(loginDTO.getUsername());
+        if (optionalOwner.isEmpty()) return status(HttpServletResponse.SC_UNAUTHORIZED).body("username not found");
+        Owner owner = optionalOwner.get();
+
+        if (!passwordEncoder.matches(loginDTO.getPassword(), owner.getPassword()))
+            return status(HttpServletResponse.SC_UNAUTHORIZED).body("Password incorrect");
+
+        return ok(jwtProvider.generateToken(owner.getUsername(), owner.getRoles()));
     }
 
     public ResponseEntity<?> loginForClient(LoginDTO loginDTO) {

@@ -21,13 +21,16 @@ public class OwnerController {
         this.service = service;
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_STAFF"})
+    @Secured({"ROLE_DIRECTOR", "ROLE_STAFF"})
     @GetMapping
-    public ResponseEntity<?> getAll(@RequestParam(name = "sort", defaultValue = "id") String sort, @RequestParam(name = "filter", defaultValue = "desc") String filter) {
+    public ResponseEntity<?> getAll(
+            @RequestParam(name = "sort", defaultValue = "createdAt") String sort,
+            @RequestParam(name = "filter", defaultValue = "desc") String filter
+    ) {
         return service.getOwners(sort, filter);
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_STAFF"})
+    @Secured({"ROLE_DIRECTOR", "ROLE_STAFF"})
     @GetMapping("/{ownerId}")
     public ResponseEntity<?> getOne(@PathVariable(name = "ownerId") UUID ownerId) {
         return service.getOwner(ownerId);
@@ -39,19 +42,19 @@ public class OwnerController {
         return service.getMe();
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
+    @Secured({"ROLE_DIRECTOR", "ROLE_MANAGER"})
     @PostMapping
     public ResponseEntity<?> saveOwner(@Valid @RequestBody OwnerDTO ownerDTO) {
         return service.addOwner(ownerDTO);
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_MANAGER", "ROLE_STAFF"})
+    @Secured({"ROLE_DIRECTOR", "ROLE_MANAGER", "ROLE_STAFF"})
     @PutMapping("/{ownerId}")
     public ResponseEntity<?> update(@PathVariable(name = "ownerId") UUID ownerId, @Valid @RequestBody OwnerDTO ownerDTO) {
         return service.editOwner(ownerId, ownerDTO);
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
+    @Secured({"ROLE_DIRECTOR", "ROLE_MANAGER"})
     @DeleteMapping("/{ownerId}")
     public ResponseEntity<?> delete(@PathVariable(name = "ownerId") UUID ownerId) {
         return service.deleteOwner(ownerId);

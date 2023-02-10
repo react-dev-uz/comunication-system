@@ -38,7 +38,8 @@ public class OwnerService {
     }
 
     public ResponseEntity<?> getOwners(String sort, String filter) {
-        return ResponseEntity.ok(repository.findAll(Sort.by(sort, filter)));
+        Sort sorted = filter.equalsIgnoreCase("asc") ? Sort.by(sort).ascending() : Sort.by(sort).descending();
+        return ResponseEntity.ok(repository.findAll(sorted));
     }
 
     public ResponseEntity<?> getOwner(UUID ownerId) {
